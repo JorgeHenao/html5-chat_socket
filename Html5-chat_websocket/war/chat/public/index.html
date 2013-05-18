@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>bi-directional communication</title>
+  <!--la ruta relativa que crea sokcet.io
+      se utiliza si la aplicacion web y socket.io 
+  estan en el mismo servidor y puerto -->
+  <!--<script src="socket.io/socket.io.js"></script> -->
+  <script src="http://localhost:8124/socket.io/socket.io.js"> </script>
+ 
+  <script>
+     //se hace la conexion con la variable global io del servidor 
+     //"se conecta la socket con el servidor"
+     //La variable socket que permitira enviar y recibir eventos al servidor
+     var socket = io.connect();
+     
+     //recibe la conexion servidor
+     socket.on('connect', function() {
+        //llamamos al servidor por medio de la funcion
+        //addme y enviamos como parametro prompt('Who are you?')
+        //prompt -> muestra un cuadro de dialogo
+        socket.emit('addme', prompt('Who are you?'));
+     });
+
+     socket.on('chat',function(username, data) {
+         
+       var p = document.createElement('p');
+       //Se introduce el nombre nombre del usuario y el mensaje en la pagina
+       p.innerHTML = username + ':  ' + data;
+       document.getElementById('output').appendChild(p);
+     });
+
+     window.addEventListener('load',function() {
+        document.getElementById('sendtext').addEventListener('click',
+            function() {
+               var text = document.getElementById('data').value;
+               socket.emit('sendchat', text);
+            }, false);
+      }, false);
+</script>
+</head>
+<body>
+<div id="output"></div>
+<div id="send">
+  <input type="text" id="data" size="100" /><br />
+  <input type="button" id="sendtext" value="Send Text" />
+</div> 
+</body>
+</html>
